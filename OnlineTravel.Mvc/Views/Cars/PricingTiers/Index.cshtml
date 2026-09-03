@@ -1,0 +1,115 @@
+@using OnlineTravel.Application.Features.CarPricingTiers.GetAllCarPricingTiers
+@model IReadOnlyList<GetAllCarPricingTiersResponse>
+
+@{
+    ViewData["Title"] = "Vehicle Pricing Strategy";
+    var carId = ViewBag.CarId;
+}
+
+<div class="row g-3 justify-content-between align-items-center mb-5 px-2">
+    <div class="col-12 col-lg-auto">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 text-uppercase x-small fw-bold opacity-50">
+                <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-muted">Admin</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Cars" asp-action="Index" class="text-decoration-none text-muted">Cars</a></li>
+                <li class="breadcrumb-item active">Pricing Strategy</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center gap-3">
+            <div class="authority-icon-box bg-success text-white rounded-3 shadow-sm">
+                <i class="fas fa-funnel-dollar"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-black text-dark mb-0 tracking-tight">Dynamic <span class="text-primary">Pricing</span></h1>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                    <span class="status-pill status-operational">
+                        <i class="fas fa-coins me-1"></i> STRATEGY ACTIVE
+                    </span>
+                    <span class="asset-id-tag">CAR ID: @carId</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-auto">
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Create" asp-route-carId="@carId" class="btn btn-premium-dark shadow-sm">
+                <i class="fas fa-plus-circle me-2"></i> NEW TIER
+            </a>
+            <a asp-controller="Cars" asp-action="Details" asp-route-id="@carId" class="btn btn-white shadow-sm border">
+                <i class="fas fa-arrow-left me-2 text-muted"></i> BACK TO CAR
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="p-5 text-center">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <i class="fas fa-coins fa-2x text-muted opacity-50"></i>
+                </div>
+                <h4 class="fw-bold">No pricing tiers defined yet</h4>
+                <p class="text-muted mb-4">Define how this vehicle is priced based on rental duration.</p>
+                <a asp-action="Create" asp-route-carId="@carId" class="btn btn-soft-primary rounded-pill px-5 py-3 fw-bold">
+                    <i class="fas fa-plus me-2"></i> CONFIGURE FIRST TIER
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light small">
+                        <tr>
+                            <th class="ps-4">Duration Range</th>
+                            <th>Hourly Rate</th>
+                            <th>Currency</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 py-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-soft-primary p-2 rounded-3 me-3">
+                                            <i class="fas fa-clock text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">@item.FromHours - @item.ToHours Hours</div>
+                                            <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">RENTAL WINDOW</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class="fw-bold text-success mb-0">@item.PricePerHour.Amount.ToString("C2")</h5>
+                                </td>
+                                <td class="text-muted fw-bold">@item.PricePerHour.Currency</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group shadow-sm rounded-pill overflow-hidden bg-white">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end px-3" title="View"><i class="fas fa-eye text-primary"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end px-3" title="Edit"><i class="fas fa-edit text-warning"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-white px-3" title="Delete"><i class="fas fa-trash text-danger"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="mt-4 bg-soft-info p-4 rounded-4 border-0">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-lightbulb fa-2x text-info me-3"></i>
+        <div>
+            <h6 class="fw-bold text-info mb-1">Pricing Tip</h6>
+            <p class="mb-0 small text-info opacity-75">Tiers allow you to offer discounts for longer rentals. For example, set a higher rate for 1-hour rentals and a lower rate for 24+ hour rentals.</p>
+        </div>
+    </div>
+</div>
